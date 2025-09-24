@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bubble Switch</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- 顶部栏 -->
+    <header class="site-header">
+      <div class="brand">🫧 Bubble Switch</div>
+      <nav class="menu">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Method</a>
+        <a href="#">Contact</a>
+      </nav>
+      <div class="search">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search a group, e.g. K-pop, gamer, vegan..."
+        />
+      </div>
+    </header>
+
+    <!-- 画框容器（不会超出屏幕） -->
+    <main id="poolWrap">
+      <canvas id="poolCanvas"></canvas>
+    </main>
+
+    <!-- 顶层卡片层：始终在最上层，卡片可点击 -->
+    <div id="postLayer" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
