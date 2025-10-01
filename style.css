@@ -323,7 +323,10 @@ body.builder-active #poolCanvas {
   user-select: none;
   transition: transform 0.05s ease;
   touch-action: none;
+  white-space: nowrap; /* 文字不换行，宽度可被脚本读到 */
+  will-change: left, top; /* 拖拽/排版更顺滑 */
 }
+
 .t-bubble.dragging {
   cursor: grabbing;
   outline: 2px solid #89a;
@@ -657,4 +660,95 @@ body.builder-active #poolCanvas {
 }
 body.feed-active #poolCanvas {
   pointer-events: none;
+}
+
+/* ---- Pretty sheets ---- */
+.sheet {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: end center; /* 底部抽屉感；需要置中可以改成 center center */
+  padding: 18px 16px;
+  z-index: 10020;
+}
+.sheet[hidden] {
+  display: none;
+}
+
+.sheet__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(6 18 38 / 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.sheet__card {
+  position: relative;
+  width: min(860px, 92vw);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16);
+  padding: 18px 18px 16px 18px;
+  animation: sheetIn 0.24s ease;
+}
+
+@keyframes sheetIn {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 右上角圆形关闭键 */
+.sheet__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 32px;
+  width: 32px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #f3f6ff;
+  color: #0b2540;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.sheet__close:hover {
+  background: #eaf2ff;
+}
+
+/* 标题与正文 */
+.sheet {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center; /* 中央显示 */
+  z-index: 10020;
+}
+
+.sheet[hidden] {
+  display: none;
+}
+
+/* 移除灰色遮罩 */
+.sheet__backdrop {
+  display: none !important;
+}
+.sheet__card {
+  position: relative;
+  width: min(720px, 92vw);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
+  padding: 20px 24px 24px;
+  animation: sheetIn 0.25s ease;
 }

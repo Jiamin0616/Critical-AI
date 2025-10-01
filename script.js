@@ -1303,18 +1303,46 @@ function layoutBuildStage() {
 }
 
 /* 标签网格：absolute + 父容器坐标 */
+/* 标签托盘：自适应行折叠（避免长标签互相覆盖） */
 function layoutTagGrid() {
-  const PAD = 10,
-    CELL_W = 140,
-    CELL_H = 48;
+  const PADX = 14; // 左右内边距
+  const PADY = 10; // 上下内边距
+  const GAPX = 18; // pill 之间横向间距
+  const GAPY = 18; // 纵向行距
   const W = tagLayer.clientWidth;
-  const cols = Math.max(1, Math.floor((W - PAD * 2) / CELL_W));
-  [...tagLayer.children].forEach((el, idx) => {
-    const c = idx % cols,
-      r = Math.floor(idx / cols);
-    el.style.left = PAD + c * CELL_W + "px";
-    el.style.top = PAD + r * CELL_H + "px";
+
+  let x = PADX,
+    y = PADY,
+    lineH = 0;
+
+  const kids = [...tagLayer.children];
+  kids.forEach((el) => {
+    // 先让元素“自然撑开”以读取真实宽高（无需 position:static）
+    el.style.width = "auto";
+    el.style.maxWidth = ""; // 避免旧限制
+    const rect = el.getBoundingClientRect();
+    const w = Math.min(rect.width, W - PADX * 2); // 防止超宽
+    const h = rect.height;
+
+    // 若此行放不下，换行
+    if (x + w > W - PADX) {
+      x = PADX;
+      y += lineH + GAPY;
+      lineH = 0;
+    }
+
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    x += w + GAPX;
+    lineH = Math.max(lineH, h);
   });
+
+  // 如果托盘内容高度不足以留出拖拽余量，轻微增高（可选）
+  const minH = y + lineH + PADY;
+  if (tagLayer.clientHeight < minH) {
+    tagLayer.style.height =
+      Math.min(minH + 12, window.innerHeight * 0.48) + "px";
+  }
 }
 
 /* 拖拽（自身监听 + Pointer Capture） */
@@ -1524,3 +1552,81 @@ function loop() {
   requestAnimationFrame(loop);
 }
 loop();
+
+/* ---------- Pretty Sheet generator (mutually exclusive) ---------- */
+function ensureSheet(id, title, html) {
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement("section");
+    el.id = id;
+    el.className = "sheet";
+    el.hidden = true;
+    el.innerHTML = `
+      <div class="sheet__backdrop" data-close="1"></div>
+      <div class="sheet__card" role="dialog" aria-modal="true" aria-labelledby="${id}-title">
+        <button class="sheet__close" aria-label="Close" title="Close" data-close="1">×</button>
+        <h3 id="${id}-title" class="sheet__title">${title}</h3>
+        <div class="sheet__content">${html}</div>
+      </div>`;
+    document.body.appendChild(el);
+
+    // 关闭：点遮罩/关闭键 或 Esc
+    el.addEventListener("click", (e) => {
+      if (e.target.dataset.close) el.hidden = true;
+    });
+    document.addEventListener("keydown", (e) => {
+      if (!el.hidden && e.key === "Escape") el.hidden = true;
+    });
+  }
+  return el;
+}
+
+/* --- Updated English copy --- */
+const HOME_COPY = `
+  <p><em>Welcome to Bubble Switch.</em> Explore how identity, interests, and perspectives shape the bubbles around us. Start by dragging tags into your Cocoon and see how the world looks from within.</p>
+`;
+const METHOD_COPY = `
+  <p><em>How it works</em></p>
+  <ol>
+    <li><strong>Build your Cocoon</strong> — Select tags that represent your identity or interests.</li>
+    <li><strong>Enter the Feed</strong> — See articles and perspectives shaped by your chosen Cocoon.</li>
+    <li><strong>Switch Views</strong> — Compare perspectives, reveal hidden posts, or teleport to explore different bubbles.</li>
+  </ol>
+  <p>The process shows how filter bubbles emerge — and how stepping across them opens new perspectives.</p>
+`;
+const ABOUT_COPY = `
+  <p><em>About Bubble Switch</em></p>
+  <p>This is an experimental project on <strong>filter bubbles</strong> and <strong>information diversity</strong>. It explores how algorithms shape what we see, and how our chosen identities reinforce or challenge these patterns. Bubble Switch is not just a visualization — it’s an invitation to test how fragile and flexible our own perspectives can be.</p>
+`;
+
+/* 创建两个互斥面板 */
+const methodSheet = ensureSheet("methodSheet", "Method", METHOD_COPY);
+const aboutSheet = ensureSheet("aboutSheet", "About", ABOUT_COPY);
+
+function showSheet(which) {
+  // 'method' | 'about' | 'none'
+  methodSheet.hidden = which !== "method";
+  aboutSheet.hidden = which !== "about";
+}
+
+/* 顶部导航互斥行为 */
+document
+  .querySelector('.menu a[title="Method"]')
+  ?.addEventListener("click", (e) => {
+    e.preventDefault();
+    showSheet(methodSheet.hidden ? "method" : "none");
+  });
+document
+  .querySelector('.menu a[title="About"]')
+  ?.addEventListener("click", (e) => {
+    e.preventDefault();
+    showSheet(aboutSheet.hidden ? "about" : "none");
+  });
+document
+  .querySelector('.menu a[title="Home"]')
+  ?.addEventListener("click", (e) => {
+    e.preventDefault();
+    showSheet("none");
+    // 可选：Home 弹个轻提示（使用你已有的 showNotice）
+    // showNotice('Welcome to Bubble Switch — drag tags to build your Cocoon.');
+  });
