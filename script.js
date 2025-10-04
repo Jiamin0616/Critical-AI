@@ -1,5 +1,5 @@
 /*************** Config ***************/
-const MIN_TAGS = 5; // 你要的最少 5 个
+const MIN_TAGS = 5;
 const DS_TARGET = 70;
 
 /*************** DOM ***************/
@@ -57,8 +57,8 @@ function resize() {
   bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   if (builderUI.classList.contains("active")) {
-    layoutTagGrid(); // 先排 tag
-    layoutBuildStage(); // 再定位 Cocoon，保证分离
+    layoutTagGrid(); // First layout tags
+    layoutBuildStage(); // Then position Cocoon to ensure separation
   }
 }
 window.addEventListener("resize", resize);
@@ -122,7 +122,7 @@ const hiddenPosts = {
         topic: "infrastructure",
       },
       {
-        t: "Urban–rural income gaps",
+        t: "Urban-rural income gaps",
         u: "https://ourworldindata.org/",
         stance: "neutral",
         topic: "economy",
@@ -146,7 +146,7 @@ const hiddenPosts = {
   Age: {
     aligned: [
       {
-        t: "Gen Z’s workplace norms",
+        t: "Gen Z's workplace norms",
         u: "https://hbr.org/",
         stance: "pro",
         topic: "work",
@@ -194,7 +194,7 @@ const hiddenPosts = {
         topic: "maker",
       },
       {
-        t: "Indie cinema’s comeback",
+        t: "Indie cinema's comeback",
         u: "https://www.indiewire.com/",
         stance: "neutral",
         topic: "film",
@@ -254,7 +254,7 @@ const hiddenPosts = {
   Climate: {
     aligned: [
       {
-        t: "Renewables growth 2020–2025",
+        t: "Renewables growth 2020-2025",
         u: "https://www.iea.org/",
         stance: "pro",
         topic: "energy",
@@ -359,7 +359,7 @@ function colorFor(cat, role, seed = 0) {
   return HSL(H, 60, 60, 1);
 }
 
-/*************** Category centers（7 个独立中心） ***************/
+/*************** Category centers ***************/
 function makeCenters() {
   const w = wrap.clientWidth,
     h = wrap.clientHeight;
@@ -478,7 +478,7 @@ const tagBank = {
   ],
   Gender: [
     "Women in STEM",
-    "Men’s health advocate",
+    "Men's health advocate",
     "Non-binary artist",
     "Working mother",
     "Stay-at-home dad",
@@ -540,7 +540,7 @@ class Bubble {
     this.x += this.vx;
     this.y += this.vy;
 
-    // 边界（左右/上）
+    // Boundary (left and right/upper)
     if (this.x - this.r < 0) {
       this.x = this.r;
       this.vx *= -1;
@@ -554,11 +554,11 @@ class Bubble {
       this.vy *= -1;
     }
 
-    // 地面约束：避免“掉下去又弹上来”的乱跳
+    // Ground constraint: avoid "falling and bouncing back"
     const floor = wrap.clientHeight - 20;
     if (this.y + this.r > floor) {
       this.y = floor - this.r;
-      this.vy = Math.min(this.vy, 0); // 不允许继续向下
+      this.vy = Math.min(this.vy, 0); // Do not allow further downward movement
     }
   }
   draw() {
@@ -905,7 +905,7 @@ function renderFeed(
   }
 }
 
-/*************** Compare（真实聚合 + 强配色） ***************/
+/*************** Compare ***************/
 const COMP_COLORS = { con: "#d32f2f", neutral: "#455a64", pro: "#1565c0" };
 function groupByTopicFromHidden(cat) {
   const src = hiddenPosts[cat] || { aligned: [], hidden: [] };
@@ -1113,7 +1113,7 @@ canvas.addEventListener("click", (e) => {
     builderUI.classList.contains("active") ||
     feedView.classList.contains("active")
   )
-    return; // 防误触
+    return;
   const rect = canvas.getBoundingClientRect();
   const mx = e.clientX - rect.left,
     my = e.clientY - rect.top;
@@ -1148,7 +1148,7 @@ teleportBtn.addEventListener("click", () => {
   const rect = feedView.getBoundingClientRect();
   runBurst(rect.left + rect.width / 2, rect.top + 120, mixCat);
   zoomCircle.style.background = colorFor(mixCat, "zoom");
-  feedCat.textContent = `${lastMainCat} × ${mixCat}`;
+  feedCat.textContent = `${lastMainCat} x ${mixCat}`;
   renderFeed(
     lastMainCat,
     lastLabel,
@@ -1165,7 +1165,7 @@ modeBackBtn.addEventListener("click", () => {
   renderFeed(lastMainCat, lastLabel, false);
 });
 
-/*************** Compare 按钮 ***************/
+/*************** Compare button ***************/
 compareBtn.addEventListener("click", () => {
   if (!lastMainCat) return;
   if (appMode === "compare") {
@@ -1178,13 +1178,13 @@ compareBtn.addEventListener("click", () => {
   }
 });
 
-/*************** Builder（legend + 布局 + 拖拽 + 点击兜底） ***************/
+/*************** Builder ***************/
 const TAGS_SOURCE = [
   // Age
-  { cat: "Age", label: "18–24" },
-  { cat: "Age", label: "25–34" },
-  { cat: "Age", label: "35–44" },
-  { cat: "Age", label: "45–54" },
+  { cat: "Age", label: "18-24" },
+  { cat: "Age", label: "25-34" },
+  { cat: "Age", label: "35-44" },
+  { cat: "Age", label: "45-54" },
   { cat: "Age", label: "55+" },
   // Gender
   { cat: "Gender", label: "Female" },
@@ -1279,7 +1279,7 @@ buildBtn.addEventListener("click", () =>
 );
 builderExit.addEventListener("click", () => builderToggle(false));
 
-/* Cocoon 放置：父容器坐标 + 间距，保证不覆盖托盘 */
+/* Cocoon placement: parent container coordinates + spacing, ensure no overlap with tray */
 function layoutBuildStage() {
   const safeGap = 56;
   const wrapH = wrap.clientHeight;
@@ -1301,14 +1301,12 @@ function layoutBuildStage() {
   bigBubble.style.top = top + "px";
   bigBubble.style.transform = "translate(-50%,0)";
 }
-
-/* 标签网格：absolute + 父容器坐标 */
-/* 标签托盘：自适应行折叠（避免长标签互相覆盖） */
+/* Tag tray layout: flow + wrap within container width */
 function layoutTagGrid() {
-  const PADX = 14; // 左右内边距
-  const PADY = 10; // 上下内边距
-  const GAPX = 18; // pill 之间横向间距
-  const GAPY = 18; // 纵向行距
+  const PADX = 14; // Left and right inner margins
+  const PADY = 10; // Top and bottom inner margins
+  const GAPX = 18; // Horizontal gap between pills
+  const GAPY = 18; // Vertical gap between rows
   const W = tagLayer.clientWidth;
 
   let x = PADX,
@@ -1317,14 +1315,14 @@ function layoutTagGrid() {
 
   const kids = [...tagLayer.children];
   kids.forEach((el) => {
-    // 先让元素“自然撑开”以读取真实宽高（无需 position:static）
+    // First, let the element "naturally expand" to read its true width and height (no need for position:static)
     el.style.width = "auto";
-    el.style.maxWidth = ""; // 避免旧限制
+    el.style.maxWidth = ""; // Avoid old restrictions
     const rect = el.getBoundingClientRect();
-    const w = Math.min(rect.width, W - PADX * 2); // 防止超宽
+    const w = Math.min(rect.width, W - PADX * 2); // Prevent overflow
     const h = rect.height;
 
-    // 若此行放不下，换行
+    // If this line doesn't fit, wrap to the next line
     if (x + w > W - PADX) {
       x = PADX;
       y += lineH + GAPY;
@@ -1337,7 +1335,7 @@ function layoutTagGrid() {
     lineH = Math.max(lineH, h);
   });
 
-  // 如果托盘内容高度不足以留出拖拽余量，轻微增高（可选）
+  // If the tray content height is insufficient to leave space for dragging, slightly increase (optional)
   const minH = y + lineH + PADY;
   if (tagLayer.clientHeight < minH) {
     tagLayer.style.height =
@@ -1345,7 +1343,7 @@ function layoutTagGrid() {
   }
 }
 
-/* 拖拽（自身监听 + Pointer Capture） */
+/* Dragging (self-listening + Pointer Capture) */
 function makeDraggable(el) {
   let dragging = false,
     sx = 0,
@@ -1398,9 +1396,9 @@ function makeDraggable(el) {
     document.body.style.userSelect = "";
     document.body.style.touchAction = "";
 
-    if (!moved) return; // 纯点击交给 click 兜底
+    if (!moved) return; // Pure click is handled by click fallback
 
-    // 命中 Cocoon（容错 12px）
+    // Hit Cocoon (tolerance 12px)
     const bb = bigBubble.getBoundingClientRect();
     const r = bb.width / 2 + 12;
     const cx = bb.left + bb.width / 2,
@@ -1417,7 +1415,7 @@ function makeDraggable(el) {
   el.addEventListener("pointerup", onUp);
 }
 
-/* 点击兜底：更宽容的添加 */
+/* Click fallback: more tolerant addition */
 function pickTagByClick(el) {
   if (!el) return;
   const bb = bigBubble.getBoundingClientRect();
@@ -1570,7 +1568,7 @@ function ensureSheet(id, title, html) {
       </div>`;
     document.body.appendChild(el);
 
-    // 关闭：点遮罩/关闭键 或 Esc
+    // Close on backdrop click or Escape key
     el.addEventListener("click", (e) => {
       if (e.target.dataset.close) el.hidden = true;
     });
@@ -1599,7 +1597,7 @@ const ABOUT_COPY = `
   <p>This is an experimental project on <strong>filter bubbles</strong> and <strong>information diversity</strong>. It explores how algorithms shape what we see, and how our chosen identities reinforce or challenge these patterns. Bubble Switch is not just a visualization — it’s an invitation to test how fragile and flexible our own perspectives can be.</p>
 `;
 
-/* 创建两个互斥面板 */
+/* Create two mutually exclusive panels */
 const methodSheet = ensureSheet("methodSheet", "Method", METHOD_COPY);
 const aboutSheet = ensureSheet("aboutSheet", "About", ABOUT_COPY);
 
@@ -1609,7 +1607,7 @@ function showSheet(which) {
   aboutSheet.hidden = which !== "about";
 }
 
-/* 顶部导航互斥行为 */
+/* Top navigation mutually exclusive behavior */
 document
   .querySelector('.menu a[title="Method"]')
   ?.addEventListener("click", (e) => {
@@ -1627,6 +1625,6 @@ document
   ?.addEventListener("click", (e) => {
     e.preventDefault();
     showSheet("none");
-    // 可选：Home 弹个轻提示（使用你已有的 showNotice）
+
     // showNotice('Welcome to Bubble Switch — drag tags to build your Cocoon.');
   });

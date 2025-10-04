@@ -142,7 +142,7 @@ body {
   cursor: pointer;
 }
 
-/* Build：只模糊背景（池 + 头部） */
+/* Build */
 body.builder-active .site-header {
   filter: blur(2px) brightness(0.95);
 }
@@ -225,7 +225,7 @@ body.builder-active #poolCanvas {
   color: #556;
 }
 
-/* Big bubble（Cocoon：仅核心可点） */
+/* Big bubble */
 #bigBubble {
   position: absolute;
   left: 50%;
@@ -289,7 +289,7 @@ body.builder-active #poolCanvas {
   cursor: not-allowed;
 }
 
-/* Tag tray：置顶层；子项 absolute；拖拽不出框 */
+/* Tag tray：top layer; child items absolute; drag not out of box */
 #tagLayer {
   position: absolute;
   left: 50%;
@@ -323,8 +323,8 @@ body.builder-active #poolCanvas {
   user-select: none;
   transition: transform 0.05s ease;
   touch-action: none;
-  white-space: nowrap; /* 文字不换行，宽度可被脚本读到 */
-  will-change: left, top; /* 拖拽/排版更顺滑 */
+  white-space: nowrap; /* Text does not wrap, width can be read by script */
+  will-change: left, top; /* Dragging/layout is smoother */
 }
 
 .t-bubble.dragging {
@@ -507,7 +507,7 @@ body.builder-active #poolCanvas {
   box-shadow: 0 0 0 2px rgba(230, 120, 60, 0.25), 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* Compare：三列均分 + 强对比色 */
+/* Compare：Three columns evenly divided + strong contrasting colors */
 #feedList.compare-mode {
   display: block;
 }
@@ -572,7 +572,7 @@ body.builder-active #poolCanvas {
   color: #6b7c93;
 }
 
-/* Show Hidden View 防溢出 */
+/* Show Hidden View overflow prevention */
 #toggleViewBtn {
   max-width: 180px;
   min-width: 120px;
@@ -609,7 +609,7 @@ body.builder-active #poolCanvas {
   display: none;
 }
 
-/* —— 基础层级 —— */
+/* —— Builder Base Layer —— */
 #poolCanvas {
   z-index: 10;
 }
@@ -653,7 +653,7 @@ body.builder-active #poolCanvas {
   pointer-events: none;
 }
 
-/* —— 模式屏蔽 —— */
+/* —— Builder Mode Mask —— */
 body.builder-active #poolCanvas {
   pointer-events: none;
   filter: blur(4px) brightness(0.9);
@@ -667,7 +667,7 @@ body.feed-active #poolCanvas {
   position: fixed;
   inset: 0;
   display: grid;
-  place-items: end center; /* 底部抽屉感；需要置中可以改成 center center */
+  place-items: end center; /* Bottom drawer feel */
   padding: 18px 16px;
   z-index: 10020;
 }
@@ -704,7 +704,7 @@ body.feed-active #poolCanvas {
   }
 }
 
-/* 右上角圆形关闭键 */
+/* Right top circular close button */
 .sheet__close {
   position: absolute;
   top: 10px;
@@ -725,12 +725,12 @@ body.feed-active #poolCanvas {
   background: #eaf2ff;
 }
 
-/* 标题与正文 */
+/* Title and Main Text */
 .sheet {
   position: fixed;
   inset: 0;
   display: grid;
-  place-items: center; /* 中央显示 */
+  place-items: center; /* Center display */
   z-index: 10020;
 }
 
@@ -738,7 +738,6 @@ body.feed-active #poolCanvas {
   display: none;
 }
 
-/* 移除灰色遮罩 */
 .sheet__backdrop {
   display: none !important;
 }
